@@ -25,7 +25,7 @@ Port = 2000 + CameraNumber
 Publisher = iServer.Publisher('0.0.0.0',Port) #should be created before accessing camera, to kill the process if already in use
 
 #Access Camera
-Camera = iCAM.Camera(CameraNumber,640,480) 
+Camera = iCAM.Camera(CameraNumber,640*2,480*2) 
 print("Starting Stream For Camera Number ", CameraNumber, 'on Port:', Port)
 
 
