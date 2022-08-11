@@ -1,3 +1,4 @@
+#Odrive MakerBase
 import odrive
 
 
@@ -126,12 +127,11 @@ class ODESC:
 
 
 
-
-
-OD = ODESC()
-# OD.EraseConfiguration()
-# OD.PassSettings()
-OD.PrintSettings()
-# OD.CalibrateMotor()
-# OD.CalibrateEncoder()
-# OD.SaveConfigurations()
+if __name__ == '__main__':
+    OD = ODESC()
+    # OD.EraseConfiguration()
+    # OD.PassSettings()
+    OD.PrintSettings()
+    # OD.CalibrateMotor()
+    # OD.CalibrateEncoder()
+    # OD.SaveConfigurations()

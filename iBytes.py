@@ -2,7 +2,6 @@ import pickle
 import cv2
 
 
-
 def EncodeFrame(Frame):
         Result, Frame = cv2.imencode('.jpg', Frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
         FrameData = pickle.dumps(Frame, 0)
