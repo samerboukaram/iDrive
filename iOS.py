@@ -29,6 +29,13 @@ def GetAllPublishers():
             AllPublishers.append(file)
     return AllPublishers
 
+def GetAllPythonScripts():
+    AllScripts = []
+    for file in os.listdir():
+        if file.endswith('.py'):
+            AllScripts.append(file)
+    return AllScripts
+
 def GetAllServers():
     AllPublishers = []
     for file in os.listdir():
