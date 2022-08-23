@@ -6,6 +6,7 @@ import time
 import iServer
 
 
+
 Port = 3000
 
 
@@ -37,22 +38,43 @@ def generate_frames():
 #Create Pages
 @app.route('/')
 def index():
-    # return render_template('index.html')
-    return render_template("""
-    <body>
-  <div class="container">
-      <div class="row">
-          <div class="col-lg-8  offset-lg-2">
-              <h3 class="mt-5">Live Streaming</h3>
-              <img src="{{ url_for('video') }}" width="100%">
-          </div>
-      </div>
-  </div>
-  </body>
-    """)
+    #opencv is not working if the render template function is not used    
+  return render_template("buttontest.html")
 
-@app.route('/video')
-def video():
+
+
+#Pages For Buttons:
+@app.route('/Forward')
+def Forward():
+    print ("Forward")
+    return ("nothing")
+
+
+@app.route('/Backward')
+def Backward():
+    print ("Backward")
+    return ("nothing")
+
+
+@app.route('/Stop')
+def Stop():
+    print ("Stop")
+    return ("nothing")
+
+@app.route('/Left')
+def Left():
+    print ("Left")
+    return ("nothing")
+
+@app.route('/Right')
+def Right():
+    print ("Right")
+    return ("nothing")
+
+
+@app.route('/Video')
+def Video():
+    print("Video")
     return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
 

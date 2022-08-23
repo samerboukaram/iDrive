@@ -5003,3 +5003,93 @@ here
 Starting Stream For Camera Number  0
 Starting Stream For Camera Number  0 on Port: 2000
 exiting
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+23567 Killed
+Process 23567 Stopped on: 0.0.0.0 3000
+ * Serving Flask app 'pFlaskCamera' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.0.105:3000/ (Press CTRL+C to quit)
+(['0'], ['USB 2.0 Camera: USB Camera'])
+Starting Stream For Camera Number  0
+Starting Stream For Camera Number  0 on Port: 2000
+exiting
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+39270 Killed
+Process 39270 Stopped on: 0.0.0.0 3000
+ * Serving Flask app 'pFlaskCamera' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.0.105:3000/ (Press CTRL+C to quit)
+127.0.0.1 - - [14/Aug/2022 22:53:36] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [14/Aug/2022 22:53:37] "GET /video HTTP/1.1" 200 -
+(['0'], ['USB 2.0 Camera: USB Camera'])
+Starting Stream For Camera Number  0
+Starting Stream For Camera Number  0 on Port: 2000
+exiting
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+34711 Killed
+Process 34711 Stopped on: 0.0.0.0 3000
+ * Serving Flask app 'pFlask' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.43.86:3000/ (Press CTRL+C to quit)
+127.0.0.1 - - [16/Aug/2022 17:37:07] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:07] "GET /Video HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:08] "GET /Stop HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:10] "GET /Left HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:10] "GET /Right HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:10] "GET /Backward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:11] "GET /Forward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:11] "GET /Backward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:12] "GET /Stop HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:12] "GET /Right HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:13] "GET /Stop HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:13] "GET /Backward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:15] "GET /Forward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:16] "GET /Forward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:16] "GET /Backward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:17] "GET /Stop HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:17] "GET /Left HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:17] "GET /Right HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:21] "GET /Right HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:22] "GET /Stop HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:22] "GET /Backward HTTP/1.1" 200 -
+127.0.0.1 - - [16/Aug/2022 17:37:24] "GET /Stop HTTP/1.1" 200 -
+(['0'], ['USB 2.0 Camera: USB Camera'])
+Starting Stream For Camera Number  0
+Starting Stream For Camera Number  0 on Port: 2000
+exiting

@@ -4,10 +4,10 @@ import os
 
 
 #Start Camera
-os.system("nohup python3 ~/Documents/iDrive/pCamera.py -0 &")
-
+a= os.system("nohup python3 ~/Documents/iDrive/pCamera.py -0 &")
+print(a)
 #Stream Camera
-os.system("nohup python3 ~/Documents/iDrive/pFlaskCamera.py &")
+os.system("nohup python3 ~/Documents/iDrive/pFlask.py &")
 
 # os.popen("screen python3 ~/Documents/effective-adventure/" + ScriptName)  #os.poopen
 
