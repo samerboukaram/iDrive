@@ -150,21 +150,9 @@ class ODESC:
         self.odrv0.axis0.controller.config.pos_gain = 30 # 30 MKR default is 20
         self.odrv0.axis0.controller.config.vel_gain = 0.02 # 0.02 MKR default is 0.0005
         self.odrv0.axis0.controller.config.vel_integrator_gain = 0.2 # 0.2 MKR default is 0.001
-        self.odrv0.axis0.controller.config.vel_limit = 30 #18.25 #maximum speed of the motor, the unit is [turn/s]. # CHECK MKR VALUE
-        
+     
         print("Controller Gains were configured")
 
-    def ConfigureTrapTraj(self):
-
-        #OPTIONAL
-        #TRAP TRAJ: This mode lets you smoothly accelerate, coast, and decelerate the axis from one position to another.
-        #With raw position control, the controller simply tries to go to the setpoint as quickly as possible.
-
-        self.odrv0.axis0.controller.config.input_mode = 5 #INPUT_MODE_TRAP_TRAJ
-        self.odrv0.axis0.trap_traj.config.vel_limit = 30
-        self.odrv0.axis0.trap_traj.config.accel_limit = 5
-        self.odrv0.axis0.trap_traj.config.decel_limit = 5
-        print("Trap Traj Configured")
 
 
 
@@ -220,20 +208,42 @@ class ODESC:
         self.Reboot()
         print('Settings Have been passed')
    
+    #POSITION CONTROL
+    def ConfigureTrapTraj(self):
+
+        self.odrv0.axis0.controller.config.control_mode = 3 #CONTROL_MODE_POSITION_CONTROL
+        #TRAP TRAJ: This mode lets you smoothly accelerate, coast, and decelerate the axis from one position to another.
+        #With raw position control, the controller simply tries to go to the setpoint as quickly as possible.
 
         
+        self.odrv0.axis0.trap_traj.config.vel_limit = 30
+        self.odrv0.axis0.trap_traj.config.accel_limit = 5
+        self.odrv0.axis0.trap_traj.config.decel_limit = 5
+        # self.odrv0.axis0.controller.config.inertia = 0
+        # self.odrv0.axis0.config.motor.current_soft_max = <Float>
+        self.odrv0.axis0.controller.config.vel_limit = 30 #18.25 #maximum speed of the motor, the unit is [turn/s]. # CHECK MKR VALUE
+        
+        self.odrv0.axis0.controller.config.input_mode = 5 #INPUT_MODE_TRAP_TRAJ
+        # self.odrv0.odrv0.axis0.controller.input_pos = <Float>
+        #Move incremental
+        # self.odrv0.axis0.controller.move_incremental(pos_increment, from_goal_point)
+        # To set the goal relative to the current actual position, use from_goal_point = False To set the goal relative to the previous destination, use from_goal_point = True
+        print("Trap Traj Configured")
 
+
+        
+    #VELOCITY CONTROL (including RAMPED)
     def SetVelocityMode(self):
-        self.odrv0.axis0.requested_state = 8 #AXIS_STATE_CLOSED_LOOP_CONTROL
         self.odrv0.axis0.controller.config.control_mode = 2 #CONTROL_MODE_VELOCITY_CONTROL
         
+        # #RAMPED VELOCITY CONTROL #Lets you set the acceleration
+        # self.odrv0.axis0.controller.config.vel_ramp_rate = 0.5 #acceleration in turn/s^2
+        # self.odrv0.axis0.controller.config.input_mode = 2 #INPUT_MODE_VEL_RAMP
+        
+        self.odrv0.axis0.requested_state = 8 #AXIS_STATE_CLOSED_LOOP_CONTROL
         print(self.odrv0.axis0.current_state)
 
-
-
- 
     def SetSpeed(self, RPM):
-
         self.odrv0.axis0.controller.input_vel = RPM/60 #in turns/sec
 
 
