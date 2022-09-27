@@ -3,8 +3,6 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"   #hide welcome message of pygame
 import pygame
 
-import iZMQ
-import time
 
 class PS4Controller:
     def __init__(self):
@@ -30,12 +28,12 @@ class PS4Controller:
         self.RightTrigger = round(self.Joystick.get_axis(5)*100)  #-100 unpressed 100 pressed
 
         #COMPANSATE PRECISION
-        if abs(self.LeftStickLR) <= 5 : self.LeftStickLR = 0 
-        if abs(self.LeftStickUD) <= 5 : self.LeftStickUD = 0
-        if abs(self.RightStickLR) <= 5 : self.RightStickLR = 0
-        if abs(self.RightStickUD) <= 5 : self.RightStickUD = 0
-        if abs(self.LeftTrigger) <= 5 : self.LeftTrigger = 0
-        if abs(self.RightTrigger) <= 5 : self.RightTrigger = 0
+        if abs(self.LeftStickLR) < 5 : self.LeftStickLR = 0 
+        if abs(self.LeftStickUD) < 5 : self.LeftStickUD = 0
+        if abs(self.RightStickLR) < 5 : self.RightStickLR = 0
+        if abs(self.RightStickUD) < 5 : self.RightStickUD = 0
+        if abs(self.LeftTrigger) < 5 : self.LeftTrigger = 0
+        if abs(self.RightTrigger) < 5 : self.RightTrigger = 0
 
     
         #BUTTONS
@@ -59,22 +57,6 @@ class PS4Controller:
         # D-pad Left      - Button 13
         # D-pad Right     - Button 14
         # Touch Pad Click - Button 15
-
-
-#PS4 CLIENT
-def Client(Address):
-    t0 = time.time()
-
-    #Suscribe to webcam
-    PS4, TimeStamp= iZMQ.SubscribeDataFile(Address,3004,'PS4') 
-    CurrentTime = time.time()
-
-    Delay = round(CurrentTime - float(TimeStamp),3)*1000  #rounded in milliseconds
-
-    tend = time.time()
-    print("Downloading from cloud @ FPS", round(1/(tend-t0)), "with the delay of", Delay)
-    
-    return int(PS4)
 
 
 

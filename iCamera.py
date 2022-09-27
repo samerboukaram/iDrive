@@ -48,9 +48,9 @@ def GetCameraNumberByName(CameraName):
 
 class Camera:
 
-    def __init__(self, Number, Width = None, Height = None, Format = None):
+    def __init__(self, Number, Width = None, Height = None, Format = None, FPS = None):
         self.Capture = cv2.VideoCapture(Number)  # capture video from webcam 0
-        # self.Capture.set(cv2.CAP_PROP_FPS, 30)
+        if FPS: self.Capture.set(cv2.CAP_PROP_FPS, FPS)
         if Format == "MJPEG":self.Capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc(*"MJPG"))
         if Width: self.Capture.set(cv2.CAP_PROP_FRAME_WIDTH, Width)
         if Height: self.Capture.set(cv2.CAP_PROP_FRAME_HEIGHT, Height)
