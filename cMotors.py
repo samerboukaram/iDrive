@@ -9,6 +9,7 @@ while True:
     #Read PS4 Values
     PS4.GetValues()
 
-    #Create Client
-    Client = iServer.Client('192.168.43.86',3000)
-    Client.Send(PS4.LeftStickUD)
+    # print(PS4.LeftStickUD, PS4.LeftStickLR, PS4.RightStickUD, PS4.RightStickLR)
+    # #Create Client
+    # Client = iServer.Client('192.168.43.86',3000)
+    # Client.Send(PS4.LeftStickUD)
