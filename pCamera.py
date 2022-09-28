@@ -34,14 +34,17 @@ while True:
     t0 = iT.t0()
 
     Frame = Camera.GetFrame()
-    if ShowPreview: iCAM.DisplayFrame(Frame)
+    if Frame is not None:
+
+        if ShowPreview:
+            iCAM.DisplayFrame(Frame)
 
 
-    # # Frame2 = iCAM.Canny(Frame)
-    # Frame2 = iCAM.FinCountours(Frame)
-    # iCAM.DisplayFrame(Frame2, "Canny")
+        # # Frame2 = iCAM.Canny(Frame)
+        # Frame2 = iCAM.FinCountours(Frame)
+        # iCAM.DisplayFrame(Frame2, "Canny")
 
-    Publisher.PublishImage("CAMERA",Frame)
+        Publisher.PublishImage("CAMERA",Frame)
 
     # print("FPS", iT.GetFPS(t0))
 

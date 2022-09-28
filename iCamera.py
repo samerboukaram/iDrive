@@ -90,10 +90,13 @@ class Camera:
 
     #must be called to update the camera frame
     def GetFrame(self):
-        suc,Frame = self.Capture.read()
+        Success,Frame = self.Capture.read()
         self.Frame = Frame
-        return self.Frame
-
+        if Success:
+            return self.Frame
+        else:
+            return None
+            
     def Close(self):
         # The following frees up resources and closes all windows
         self.Capture.release()
