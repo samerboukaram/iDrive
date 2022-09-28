@@ -41,8 +41,34 @@ def GetCameraNumberByName(CameraName):
             return int(CameraNumbers[i])
 
 
+def GetCameraDefaultResolution(CameraNumber):
+    Camera = cv2.VideoCapture(int(CameraNumber))
+    Width = Camera.get(cv2.CAP_PROP_FRAME_WIDTH)
+    Height = Camera.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    # print("Camera Number", CameraNumber, Width, Height)
+    return Width, Height
+
 #CHECK old functions to get camera prop form ubuntu
 
+
+def GetAllCameraResolutions(CameraNumber):
+
+    #Get all resolutions for a camera, compare with list of common resolutions from wikipedia
+
+    import pandas as pd
+
+    url = "https://en.wikipedia.org/wiki/List_of_common_resolutions"
+    table = pd.read_html(url)[0]
+    table.columns = table.columns.droplevel()
+    cap = cv2.VideoCapture(5)
+    resolutions = {}
+    for index, row in table[["W", "H"]].iterrows():
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, row["W"])
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, row["H"])
+        width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        resolutions[str(width)+"x"+str(height)] = "OK"
+    print(resolutions)
 
 
 
@@ -76,8 +102,11 @@ class Camera:
 
 
 
-def DisplayFrame(Frame):
-    cv2.imshow("Frame",Frame)
+def DisplayFrame(Frame, Title = None):
+    if Title:
+        cv2.imshow(Title,Frame)
+    else:
+        cv2.imshow("Frame",Frame)
     Key = cv2.waitKey(1)
     
     if Key == 113:  #q key is pressed
@@ -85,6 +114,42 @@ def DisplayFrame(Frame):
         exit()
 
 
+def SplitStereoFrame(Frame):  #horizontal stereo iamge
+    Frame1 = Frame[:,0:int(Frame.shape[1]/2),:]
+    Frame2 = Frame[:,int(Frame.shape[1]/2):,:]
+
+    return Frame1, Frame2
+
+
+
+#Old fucntions from computer vision
+    
+def Canny(img):
+    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    imgBlur = cv2.GaussianBlur(imgGray, (7, 7), 1)
+    imgCanny = cv2.Canny(imgBlur, 50, 50)
+    return imgCanny
+
+
+def FinCountours(img):
+    originalimage = img
+
+    contours, hierarchy = cv2.findContours(Canny(img), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    count = 0
+    for cnt in contours:
+
+        area = cv2.contourArea(cnt)
+
+        if area > 10:   #10
+            cv2.drawContours(originalimage, cnt, -1, (255, 20, 50), 3)  #3
+            # cv2.imshow("Contours", originalimage)
+            # cv2.waitKey(0)
+     
+            count = count +1
+            # print(area)
+    print("number of contours", count)
+    return originalimage
 
 
 

@@ -3,6 +3,6 @@ import iCamera as iCAM
 
 
 while True:
-    image = iServer.SubscribeImage('192.168.0.114',2009,"CAMERA")
+    image = iServer.SubscribeImage('192.168.0.121',2000,"CAMERA")
     iCAM.DisplayFrame(image)
 

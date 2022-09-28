@@ -1,26 +1,17 @@
-import numpy as np
+#Get all resolutions for a camera
+
+import pandas as pd
 import cv2
 
-
-# capture the webcam
-vid1 = cv2.VideoCapture(6)
-vid2 = cv2.VideoCapture(0)
-
-
-
-while True:  # while true, read the camera
-    ret, frame = vid1.read()
-    ret1, frame1 = vid2.read()
-    
-
-    if ret:
-        cv2.imshow("cam0", frame)  # frame with name and variable of the camera
-    if ret1:
-        cv2.imshow("cam1", frame1)
-       
-    # to break the loop and terminate the program
-    if cv2.waitKey(1) & 0xFF == ord("q"):
-        break
-
-vid1.release()
-vid2.release()
+url = "https://en.wikipedia.org/wiki/List_of_common_resolutions"
+table = pd.read_html(url)[0]
+table.columns = table.columns.droplevel()
+cap = cv2.VideoCapture(0)
+resolutions = {}
+for index, row in table[["W", "H"]].iterrows():
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, row["W"])
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, row["H"])
+    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    resolutions[str(width)+"x"+str(height)] = "OK"
+print(resolutions)
