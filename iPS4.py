@@ -1,38 +1,19 @@
 
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"   #hide welcome message of pygame
+os.environ['SDL_VIDEODRIVER'] = "dummy" #required on server like systems.
 import pygame
 
 
 class PS4Controller:
     def __init__(self):
-        pygame.init()
+        pygame.display.init()
         pygame.joystick.init()
         self.Joystick = pygame.joystick.Joystick(0)
         self.Joystick.init()
      
+
     def GetValues(self):
-
-        for event in pygame.event.get():
-
-            print(event.type, event.value)            
-            # if event.type == pygame.JOYAXISMOTION:
-            #     print(round(event.value,2))
-            # elif event.type == pygame.JOYBUTTONDOWN:
-            #     print(2)
-            #     # button_data[event.button] = True
-            # elif event.type == pygame.JOYBUTTONUP:
-            #     print(3)
-            #     # button_data[event.button] = False
-            # elif event.type == pygame.JOYHATMOTION:
-            #     print(4)
-            #     # hat_data[event.hat] = event.value
-
-        
-        # os.system('clear') #Clear the terminal
-
-
-    def GetValues2(self):
 
         pygame.event.pump()
 

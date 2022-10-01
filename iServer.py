@@ -257,23 +257,17 @@ class Client:
         Data = pickle.dumps(Message, 0) 
         self.Socket.send(Data)
 
-    # def SendFrame(self, Frame, TimeStamp): #needs testing
+    def SendFrame(self, Frame): #needs testing
    
-    #     result, frame = cv2.imencode('.jpg', Frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-    #     Data = pickle.dumps(frame, 0)
-    #     print("Length of the Data", len(Data))
+        Data = iBY.EncodeFrame(Frame)
+        self.Socket.send(Data) #send the frame
 
 
-    #     self.SendString(str(TimeStamp))  # send the time stamp first
+    # def SendFrameDataFile(self, FrameDataFile): #needs testing
+   
+    #     self.Socket.send(FrameDataFile) #send the frame
     #     Response = self.Socket.recv_string() # must have a response for the server socket to work
 
-    #     self.Socket.send(Data) #send the frame
-
-
-    def SendFrameDataFile(self, FrameDataFile): #needs testing
-   
-        self.Socket.send(FrameDataFile) #send the frame
-        Response = self.Socket.recv_string() # must have a response for the server socket to work
 
     # def ReceiveDataFile(self):
     #     self.Socket.send_string("Send Please") #send the frame

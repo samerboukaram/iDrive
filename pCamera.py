@@ -18,17 +18,16 @@ except:
     ShowPreview = False
 
 
-2
 #Create Publisher
 Port = 2000 + CameraNumber
 Publisher = iServer.Publisher('0.0.0.0',Port) #should be created before accessing camera, to kill the process if already in use
 
 #Access Camera
-Camera = iCAM.Camera(CameraNumber,320,240, Format = "MJPEG", FPS = 60)
+Camera = iCAM.Camera(CameraNumber,320, 240, Format = "MJPEG", FPS = 60)
 print("Starting Stream For Camera Number ", CameraNumber, 'on Port:', Port)
 
 
-
+FPS = 0
 
 while True:
     t0 = iT.t0()
@@ -37,7 +36,7 @@ while True:
     if Frame is not None:
 
         if ShowPreview:
-            iCAM.DisplayFrame(Frame)
+            iCAM.DisplayFrame(Frame, "Camera Publisher", FPS)
 
 
         # # Frame2 = iCAM.Canny(Frame)
@@ -46,7 +45,7 @@ while True:
 
         Publisher.PublishImage("CAMERA",Frame)
 
-    # print("FPS", iT.GetFPS(t0))
+    FPS = iT.GetFPS(t0)
 
 
 

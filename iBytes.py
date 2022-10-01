@@ -31,6 +31,11 @@ def EncodeInt(Int):
     IntData = Int.to_bytes(3, 'big',signed =True)
     return IntData
 
+def DecodeInt(IntData):
+    return int.from_bytes(IntData, 'big')
+
+    
+
 
 
 

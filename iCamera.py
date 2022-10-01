@@ -1,6 +1,6 @@
 import cv2
 import os
-
+import iOS
 
 #######FUNCTIONS TO GET CAMERAS IN SYSTEM
 
@@ -72,6 +72,10 @@ def GetAllCameraResolutions(CameraNumber):
 
 
 
+def FPSOnFrame(Image, FPS):
+    Image = cv2.putText(Image, str(FPS) + "FPS", (5,25), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(50,255,255),2,1)
+    return Image
+
 class Camera:
 
     def __init__(self, Number, Width = None, Height = None, Format = None, FPS = None):
@@ -103,9 +107,35 @@ class Camera:
         cv2.destroyAllWindows()
 
 
+def StartCameraByNumber(CameraNumber, ShowPreview = False, CameraPublisherPath = iOS.GetThisPath() + "/pCamera.py "):
+    
+    if ShowPreview:
+        FulllPath =  CameraPublisherPath + str(CameraNumber) + " " + "Show"
+    else:
+        FulllPath =  CameraPublisherPath + str(CameraNumber)
+
+    iOS.StartProcess(FulllPath)
+    # if ShowPreview:
+    #     os.popen("nohup python3 " +  CameraPublisherPath + str(CameraNumber) + " " + "Show")
+    # else:
+    #     os.popen("nohup python3 " + CameraPublisherPath + str(CameraNumber))
 
 
-def DisplayFrame(Frame, Title = None):
+def PrintCamerasInfo():
+    for n in range(len(GetCamerasNumbersAndNames()[0])): #Camera Numbers
+            CameraNumber = GetCamerasNumbersAndNames()[0][n]
+            CameraName =GetCamerasNumbersAndNames()[1][n]
+            print("Camera Number:", CameraNumber, "         -----       Name:", CameraName, "       -----     Default Resolution:", GetCameraDefaultResolution(CameraNumber))
+        
+
+    
+
+def DisplayFrame(Frame, Title = None, FPS = None):
+  
+    if FPS: 
+        Frame = FPSOnFrame(Frame.copy(),FPS) #Write on a copy not to overide the original one
+       
+    
     if Title:
         cv2.imshow(Title,Frame)
     else:
