@@ -7,7 +7,8 @@ import iCamera as iCAM
 
 #Server Address
 User = 'root'
-Address = '0.0.0.0' #'172.104.253.25'
+# Address = '0.0.0.0'
+Address = '172.104.253.25'
 Port = '1510'
 
 

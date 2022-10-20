@@ -2,7 +2,8 @@
 import odrive
 import time
 
-
+# ODRIVE ENUMS
+# https://github.com/odriverobotics/ODrive/blob/master/tools/odrive/enums.py
 
 '''CONFIGURATIONS BACKUP
 
@@ -23,9 +24,6 @@ import time
 
 
 
-
-
-
 #SERVER CLASS
 class ODESC:
 
@@ -36,10 +34,11 @@ class ODESC:
 
         print("firmware version on board", self.GetFirmwareVersion())
 
+
     def GetFirmwareVersion(self):
         FWVersion = (str(self.odrv0.fw_version_major)
             + "." + str(self.odrv0.fw_version_minor)
-            + "." + str(self.odrv0.fw_version_revision) 
+            + "." + str(self.odrv0.fw_version_revision)
             + ".post" + str(self.odrv0.fw_version_unreleased))
         print(FWVersion)
 
@@ -47,6 +46,7 @@ class ODESC:
     def FindOdrive(self):
         self.odrv0 = odrive.find_any() #Get Odrive Object, find it again if it disapeared.
         print("Connected To Odrive:", self.odrv0.serial_number)
+
 
     def DumpErrors(self):
         odrive.utils.dump_errors(self.odrv0)
@@ -95,8 +95,8 @@ class ODESC:
         Axis.motor.config.pole_pairs = PolePairs #Pole Pairs
         Axis.motor.config.motor_type = 0 #MOTOR_TYPE_HIGH_CURRENT (Not gimbal)
         Axis.motor.config.resistance_calib_max_voltage = 5 #MaxSVoltage/2 #2 by MKS 4 for iDrive #it is standardized to S/2
-        Axis.motor.config.calibration_current =10 #this was 0.5 or 1 #MaxSVoltage #10 by default, 5 by MKS 2 for iDrive smaller motors like 5055,4260 #Standardized to S
-        Axis.motor.config.current_lim = 30 #25 #MaxSVoltage*3.65 #MaX current for motor  #15 by MKS #25 for iDrive
+        Axis.motor.config.calibration_current =10 #10 for 6354, 5 by MKS 2 for iDrive smaller motors like 5055,4260 #Standardized to S
+        Axis.motor.config.current_lim = 25 #25 #MaxSVoltage*3.65 #MaX current for motor  #15 by MKS #25 for iDrive
         Axis.motor.config.requested_current_range = MaxSVoltage*3.65+5 #20 for MKS motor current sampling range.
         #Axis.motor.config.direction = 0 #-1 1
         Axis.controller.config.vel_limit = MaxSVoltage*980*3.65/60 #30 for MKS #18.25 #maximum speed of the motor, the unit is [turn/s]. # CHECK MKS VALUE
@@ -145,7 +145,20 @@ class ODESC:
         print("Controller Gains were configured")
 
 
+    def EncoderSignalSearch(self, Axis):
+        if Axis == 0: Axis = self.odrv0.axis0
+        if Axis == 1: Axis = self.odrv0.axis1
+        
+        Axis.encoder.config.use_index = True
 
+        Axis.requested_state = 6 #AXIS_STATE_ENCODER_INDEX_SEARCH
+        print("Finding Encoder Index...")
+        while Axis.current_state != 1: #AXIS_STATE_IDLE
+            time.sleep(0.1)
+        print("Index Signal Found!!")
+
+        # Axis.config.startup_encoder_index_search = True #This searches for the index on each startup
+        
 
     def CalibrateEncoder(self, Axis):
         if Axis == 0: Axis = self.odrv0.axis0
@@ -160,7 +173,7 @@ class ODESC:
         while Axis.current_state != 1: #AXIS_STATE_IDLE
             time.sleep(0.1)
 
-        Axis.encoder.config.pre_calibrated = True
+        Axis.encoder.config.pre_calibrated = True   #this option will go Back to false if INDEX signal search was not done
         # odrv0.axis0.config.startup_encoder_offset_calibration = True #start encoder calibration after powering
         Axis.config.startup_closed_loop_control = True #Automatically enter closed-loop control after power-on.
      	
@@ -200,11 +213,13 @@ class ODESC:
         self.ConfigureEncoder(Axis = Axis, CPR = 16384)
         self.ConfigureGains(Axis)
 
+        self.EncoderSignalSearch(Axis) #added to save encoder calibration
         self.CalibrateEncoder(Axis)
 
         self.SaveConfigurations()
         # self.Reboot()
         print('Settings Have been passed')
+
    
     #POSITION CONTROL
     def SetPositionMode(self, Axis):
@@ -261,8 +276,8 @@ class ODESC:
         Axis.controller.config.control_mode = 2 #CONTROL_MODE_VELOCITY_CONTROL
         
         # #RAMPED VELOCITY CONTROL #Lets you set the acceleration
-        Axis.controller.config.vel_ramp_rate = 5 #default 0.5 #acceleration in turn/s^2
-        Axis.controller.config.input_mode = 2 #INPUT_MODE_VEL_RAMP
+        # Axis.controller.config.vel_ramp_rate = 5 #default 0.5 #acceleration in turn/s^2
+        # Axis.controller.config.input_mode = 2 #INPUT_MODE_VEL_RAMP
         
         Axis.requested_state = 8 #AXIS_STATE_CLOSED_LOOP_CONTROL
         print(Axis.current_state)
@@ -278,19 +293,27 @@ if __name__ == '__main__':
 
     OD = ODESC()
     # OD.Reboot()
-    OD.DumpErrors()
-    OD.EraseConfiguration()
-    OD.PassSettings(0)
-    # OD.PassSettings(1)
+    # OD.DumpErrors()
+    # OD.EraseConfiguration()
+    # OD.PassSettings(0)
+    # # # OD.PassSettings(1)
 
-    OD.SetVelocityMode(0)
-    # OD.SetVelocityMode(1)
-    OD.SetSpeed(Axis = 0, RPM = 5*6)
+    # OD.SetVelocityMode(0)
+    # # OD.SetVelocityMode(1)
+    OD.SetSpeed(Axis = 0, RPM = 20)
     # OD.SetSpeed(Axis = 1, RPM = 40*3.2)
 
     #Get motor current
     # while true:odrv0.axis0.motor.current_control.Iq_measured
     
+    # import iPS4
+
+    # PS4 = iPS4.PS4Controller()
+
+    # while True:
+    #     PS4.GetValues()
+    #     RPM = -int(PS4.LeftStickUD*1000/10)
+    #     OD.SetSpeed(Axis = 0, RPM = 42+RPM)
 
 
     # OD.SetPositionMode(0)

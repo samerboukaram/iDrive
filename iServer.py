@@ -12,8 +12,6 @@ class Publisher:
 
          #check and try to kill the PID on the needed Port
         iOS.KillProcessOnPort(int(Port))
-        iOS.KillProcessOnPort(int(Port))
-        time.sleep(0.01) #wait no to have a runtime error
 
         #Create Publisher Socket
         self.Socket = zmq.Context().socket(zmq.PUB)

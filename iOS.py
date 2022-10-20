@@ -2,6 +2,9 @@
 import subprocess
 import os
 import signal
+import time
+import multiprocessing
+
 
 #Get This Path
 import pathlib
@@ -27,6 +30,17 @@ def KillProcessOnPort(PortNumber):
         if PortNumber == Port:
             EndProcess(PID)
             print("Process", PID, "Stopped on:", Address,Port)
+
+
+def KillCamera(CameraNumber):
+    
+    output_command = os.popen("lsof /dev/video" + str(CameraNumber)).readlines()
+
+    for line in output_command[2:]:
+        PID = int(line.split(' ')[1])
+   
+        EndProcess(PID)
+        print("Process", PID, "Stopped")
 
 
 def GetAllPublishers():
@@ -128,8 +142,10 @@ def CheckIfRunningWithArgument(ScriptName, Argument): #can be merged with the pr
 
 def StartProcess(ScriptName):
 
-    # os.popen("nohup python3 " + ScriptName)
-    os.popen("screen python3 " + ScriptName)
+    
+    os.popen("python3 " + ScriptName)  #os.poopen 
+    # os.system("nohup python3 " + ScriptName)
+    # os.popen("screen python3 " + ScriptName)
     #SELECT BETWEEN nohup screen    os.popen os.system   subprocess.call
     # subprocess.call(["python3", "~/Documents/effective-adventure/" + ScriptName])
     # os.system("python3 ~/Documents/effective-adventure/" + ScriptName)
@@ -144,8 +160,12 @@ def StartProcess(ScriptName):
 
 
 def EndProcess(ProcessID):
-    os.kill(int(ProcessID), signal.SIGKILL) 
-    print(str(ProcessID) + " Killed")
+    try:
+        os.kill(int(ProcessID), signal.SIGKILL) 
+        print(str(ProcessID) + " Killed.")
+        time.sleep(0.1) #wait no to have a runtime error
+    except:
+        print("Could not kill process, or already killed")
     
 
 
@@ -155,6 +175,21 @@ def EndProcessByList(PIDList):
             EndProcess(PID)
         except:
             pass
+
+
+
+
+
+def StartProcessMulti(Function, Arguments = None):
+    if Arguments:
+        Proc = multiprocessing.Process(target=Function, args = Arguments) 
+    else:
+        Proc = multiprocessing.Process(target=Function) 
+
+
+    Proc.start()
+    Proc.join()
+    return(Proc)
 
 
 

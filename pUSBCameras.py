@@ -11,6 +11,7 @@ ThisPath = iOS.GetThisPath()
 #Print Infomation
 iCAM.PrintCamerasInfo()
 
+# iCAM.GetAllCameraResolutions(27)
 
 for CameraNumber in iCAM.GetCamerasNumbersAndNames()[0]:
         print("starting", CameraNumber)
@@ -18,3 +19,4 @@ for CameraNumber in iCAM.GetCamerasNumbersAndNames()[0]:
         # os.popen("screen python3 " + ThisPath + "/pCamera.py " + CameraNumber)  #os.poopen
         os.popen("nohup python3 " + ThisPath + "/pCamera.py " + CameraNumber + " " + "Show")  #os.poopen
         # os.popen("python3 " + ThisPath + "/pCamera.py " + CameraNumber + " " + "Show")  #os.poopen
+        

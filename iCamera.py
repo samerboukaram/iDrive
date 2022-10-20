@@ -1,6 +1,10 @@
+from xml.dom.minidom import Identified
 import cv2
 import os
 import iOS
+import iServer as iSV
+
+
 
 #######FUNCTIONS TO GET CAMERAS IN SYSTEM
 
@@ -48,10 +52,9 @@ def GetCameraDefaultResolution(CameraNumber):
     # print("Camera Number", CameraNumber, Width, Height)
     return Width, Height
 
-#CHECK old functions to get camera prop form ubuntu
 
 
-def GetAllCameraResolutions(CameraNumber):
+def GetAllCameraResolutions(CameraNumber): #SOME RESOLUTIONS NOT FOUND FOR 9732 136deg camera!!!
 
     #Get all resolutions for a camera, compare with list of common resolutions from wikipedia
 
@@ -60,7 +63,7 @@ def GetAllCameraResolutions(CameraNumber):
     url = "https://en.wikipedia.org/wiki/List_of_common_resolutions"
     table = pd.read_html(url)[0]
     table.columns = table.columns.droplevel()
-    cap = cv2.VideoCapture(5)
+    cap = cv2.VideoCapture(CameraNumber)
     resolutions = {}
     for index, row in table[["W", "H"]].iterrows():
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, row["W"])
@@ -76,21 +79,40 @@ def FPSOnFrame(Image, FPS):
     Image = cv2.putText(Image, str(FPS) + "FPS", (5,25), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(50,255,255),2,1)
     return Image
 
+
+def GetCameraByNumberOrName(NumberOrName):
+    if type(NumberOrName) == int : #check if int or str
+        print("here")
+        Number = NumberOrName
+    elif type(NumberOrName) == str:
+        Number = GetCameraNumberByName(NumberOrName)
+    else:
+        Number = None  
+    return Number
+    
+
 class Camera:
 
-    def __init__(self, Number, Width = None, Height = None, Format = None, FPS = None):
-        self.Capture = cv2.VideoCapture(Number)  # capture video from webcam 0
+    def __init__(self, CameraNumber, Width = None, Height = None, Format = None, FPS = None, Publish = False):
+       
+        #Get Number
+        self.Number = CameraNumber
+
+
+        #Publisher
+        if Publish:
+            #Create Publisher
+            self.Port = 2000 + self.Number
+            self.Publisher = iSV.Publisher('0.0.0.0',self.Port) #created before accessing camera, to kill the process if already in use
+
+        #Get Camera
+        iOS.KillCamera(self.Number) #kill the camera process if it was already running
+        self.Capture = cv2.VideoCapture(self.Number)  # capture video from webcam 0
         if FPS: self.Capture.set(cv2.CAP_PROP_FPS, FPS)
         if Format == "MJPEG":self.Capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc(*"MJPG"))
         if Width: self.Capture.set(cv2.CAP_PROP_FRAME_WIDTH, Width)
         if Height: self.Capture.set(cv2.CAP_PROP_FRAME_HEIGHT, Height)
-       
-
-    def GetFrameSize(self):
-        Width  = int(self.Capture.get(cv2.CAP_PROP_FRAME_WIDTH))   
-        Height = int(self.Capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        FPS = int(self.Capture.get(cv2.CAP_PROP_FPS))
-        return str(Width)  + "x"+ str(Height) +" at " + str(FPS) + " FPS"
+        
 
     #must be called to update the camera frame
     def GetFrame(self):
@@ -100,25 +122,15 @@ class Camera:
             return self.Frame
         else:
             return None
-            
+
+
+
+                      
     def Close(self):
         # The following frees up resources and closes all windows
         self.Capture.release()
         cv2.destroyAllWindows()
 
-
-def StartCameraByNumber(CameraNumber, ShowPreview = False, CameraPublisherPath = iOS.GetThisPath() + "/pCamera.py "):
-    
-    if ShowPreview:
-        FulllPath =  CameraPublisherPath + str(CameraNumber) + " " + "Show"
-    else:
-        FulllPath =  CameraPublisherPath + str(CameraNumber)
-
-    iOS.StartProcess(FulllPath)
-    # if ShowPreview:
-    #     os.popen("nohup python3 " +  CameraPublisherPath + str(CameraNumber) + " " + "Show")
-    # else:
-    #     os.popen("nohup python3 " + CameraPublisherPath + str(CameraNumber))
 
 
 def PrintCamerasInfo():
@@ -135,57 +147,82 @@ def DisplayFrame(Frame, Title = None, FPS = None):
     if FPS: 
         Frame = FPSOnFrame(Frame.copy(),FPS) #Write on a copy not to overide the original one
        
-    
-    if Title:
-        cv2.imshow(Title,Frame)
-    else:
-        cv2.imshow("Frame",Frame)
+    if Title is None:
+        Title = "Frame"
+
+    cv2.imshow(Title,Frame)
     Key = cv2.waitKey(1)
     
     if Key == 113:  #q key is pressed
-        print("exiting")
+        cv2.destroyWindow(Title)
         exit()
 
 
-def SplitStereoFrame(Frame):  #horizontal stereo iamge
-    Frame1 = Frame[:,0:int(Frame.shape[1]/2),:]
-    Frame2 = Frame[:,int(Frame.shape[1]/2):,:]
-
-    return Frame1, Frame2
 
 
+def LaunchCamera(CameraNumber, Width, Height, FPS, ShowPreview, Publish):
 
-#Old fucntions from computer vision
-    
-def Canny(img):
-    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    imgBlur = cv2.GaussianBlur(imgGray, (7, 7), 1)
-    imgCanny = cv2.Canny(imgBlur, 50, 50)
-    return imgCanny
+    #get this python script name to launch the current scipt in a new process
+    Script = os.path.basename(__file__) 
 
-
-def FinCountours(img):
-    originalimage = img
-
-    contours, hierarchy = cv2.findContours(Canny(img), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-    count = 0
-    for cnt in contours:
-
-        area = cv2.contourArea(cnt)
-
-        if area > 10:   #10
-            cv2.drawContours(originalimage, cnt, -1, (255, 20, 50), 3)  #3
-            # cv2.imshow("Contours", originalimage)
-            # cv2.waitKey(0)
-     
-            count = count +1
-            # print(area)
-    print("number of contours", count)
-    return originalimage
+    #Launch script in new external thread with arguments
+    os.popen("python3 " + Script + " " +str(CameraNumber)
+                                 + " " +str(Width)
+                                 + " " +str(Height)
+                                 + " " +str(FPS)
+                                 + " " +str(ShowPreview)
+                                 + " " +str(Publish)
+                                 )
 
 
 
 
+
+#USED TO LAUNCH A CERTAIN CAMERA IN AN INDEPENDANT PROCESS
 if __name__ == '__main__':
-  pass
+
+    import sys
+    import iTime as iT
+  
+
+    try:
+        #Get Arguments
+        CameraNumber = int(sys.argv[1])
+        Width = int(sys.argv[2])
+        Height = int(sys.argv[3])
+        FPS = int(sys.argv[4])
+        ShowPreview = (str(sys.argv[5]) == "True")
+        Publish = (str(sys.argv[6]) == "True")
+    except:
+        print("Camera Arguments Missing")
+        exit()
+
+
+    Cam = Camera(CameraNumber, 
+            Width = Width, Height = Height, Format = "MJPEG", FPS = FPS,Publish= Publish)
+
+    FPS = 0
+
+    while True:
+        try:
+            t0 = iT.t0()
+
+            Frame = Cam.GetFrame()
+            if Frame is not None:
+                if ShowPreview:
+                    DisplayFrame(Frame, "Camera Publisher", FPS)
+
+                if Publish:
+                    Cam.Publisher.PublishImage("CAMERA",Frame)
+
+            FPS = iT.GetFPS(t0)
+        except:
+            iOS.KillCamera(CameraNumber)
+            # Cam.Close()
+            exit() #to close the while loop
+    
+
+
+
+
+
