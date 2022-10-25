@@ -96,7 +96,7 @@ class ODESC:
         Axis.motor.config.motor_type = 0 #MOTOR_TYPE_HIGH_CURRENT (Not gimbal)
         Axis.motor.config.resistance_calib_max_voltage = 5 #MaxSVoltage/2 #2 by MKS 4 for iDrive #it is standardized to S/2
         Axis.motor.config.calibration_current =10 #10 for 6354, 5 by MKS 2 for iDrive smaller motors like 5055,4260 #Standardized to S
-        Axis.motor.config.current_lim = 25 #25 #MaxSVoltage*3.65 #MaX current for motor  #15 by MKS #25 for iDrive
+        Axis.motor.config.current_lim = 50 #25 #MaxSVoltage*3.65 #MaX current for motor  #15 by MKS #25 for iDrive
         Axis.motor.config.requested_current_range = MaxSVoltage*3.65+5 #20 for MKS motor current sampling range.
         #Axis.motor.config.direction = 0 #-1 1
         Axis.controller.config.vel_limit = MaxSVoltage*980*3.65/60 #30 for MKS #18.25 #maximum speed of the motor, the unit is [turn/s]. # CHECK MKS VALUE
@@ -124,7 +124,7 @@ class ODESC:
         Axis.encoder.config.mode = 0 #ENCODER_MODE_INCREMENTAL
         Axis.encoder.config.cpr = CPR #MKS encoder
         Axis.encoder.config.bandwidth = 3000 # 3000MKS default was 1000
-        Axis.encoder.config.calib_scan_distance = 50*2 #how much the motor rotates for calibration
+        Axis.encoder.config.calib_scan_distance = 50 #how much the motor rotates for calibration
         #               default was 50 increased  not to have CPR Mismatch
         Axis.config.calibration_lockin.current = 5 #MKS
         # Axis.config.can_node_id = 16
@@ -173,9 +173,9 @@ class ODESC:
         while Axis.current_state != 1: #AXIS_STATE_IDLE
             time.sleep(0.1)
 
-        Axis.encoder.config.pre_calibrated = True   #this option will go Back to false if INDEX signal search was not done
-        # odrv0.axis0.config.startup_encoder_offset_calibration = True #start encoder calibration after powering
-        Axis.config.startup_closed_loop_control = True #Automatically enter closed-loop control after power-on.
+        # Axis.encoder.config.pre_calibrated = True   #this option will go Back to false if INDEX signal search was not done
+        Axis.config.startup_encoder_offset_calibration = True #start encoder calibration after powering
+        # Axis.config.startup_closed_loop_control = True #Automatically enter closed-loop control after power-on.
      	
 
         print("Encoder Offset Float", Axis.encoder.config.offset_float)
@@ -213,7 +213,7 @@ class ODESC:
         self.ConfigureEncoder(Axis = Axis, CPR = 16384)
         self.ConfigureGains(Axis)
 
-        self.EncoderSignalSearch(Axis) #added to save encoder calibration
+        # self.EncoderSignalSearch(Axis) #added to save encoder calibration
         self.CalibrateEncoder(Axis)
 
         self.SaveConfigurations()
@@ -288,24 +288,69 @@ class ODESC:
         
         Axis.controller.input_vel = RPM/60 #in turns/sec
 
+    def GetCurrent(self, Axis):
+        if Axis == 0: Axis = self.odrv0.axis0
+        if Axis == 1: Axis = self.odrv0.axis1
+        
+        CommandedCurrent = round(Axis.motor.current_control.Iq_setpoint,2)
+        MeasuredCurrent = round(Axis.motor.current_control.Iq_measured,2)
+
+        
+        #Encoder position 
+        Turns = Axis.encoder.pos_estimate #[turns] 
+        # Counts = Axis.encoder.pos_est_counts #[counts]
+
+        #View rotational velocity with 
+        TurnsPerSec = round(Axis.encoder.vel_estimate,2) #[turn/s] 
+        # CountsPerSec = Axis.encoder.vel_est_counts #[count/s]
+
+        # print(MeasuredCurrent, round(CommandedCurrent-MeasuredCurrent,2),TurnsPerSec*60)
+        return MeasuredCurrent
+
 
 if __name__ == '__main__':
 
     OD = ODESC()
     # OD.Reboot()
-    # OD.DumpErrors()
+    OD.DumpErrors()
     # OD.EraseConfiguration()
     # OD.PassSettings(0)
-    # # # OD.PassSettings(1)
+    # OD.PassSettings(1)
+
+    # OD.ConfigureMotor(Axis = 0,PolePairs = 7, MaxSVoltage = 5, KV = 100)
+    # OD.ConfigureEncoder(Axis = 0, CPR = 16384)
+    # OD.ConfigureGains(Axis = 0)
+
+    # OD.ConfigureMotor(Axis = 1,PolePairs = 7, MaxSVoltage = 5, KV = 140)
+    # OD.ConfigureEncoder(Axis = 1, CPR = 16384)
+    # OD.ConfigureGains(Axis = 1)
+
+        
+    # OD.odrv0.axis0.encoder.config.use_index = True
+    # OD.odrv0.axis1.encoder.config.use_index = True
+
+    # OD.odrv0.axis0.requested_state = 6 #AXIS_STATE_ENCODER_INDEX_SEARCH
+    # OD.odrv0.axis1.requested_state = 6 #AXIS_STATE_ENCODER_INDEX_SEARCH
+
+
+    # OD.EncoderSignalSearch(1) #added to save encoder calibration
+    # OD.EncoderSignalSearch(0) #added to save encoder calibration
+
+    # OD.CalibrateEncoder(Axis)
+
+    # OD.SaveConfigurations()
+
+
 
     # OD.SetVelocityMode(0)
-    # # OD.SetVelocityMode(1)
-    OD.SetSpeed(Axis = 0, RPM = 20)
-    # OD.SetSpeed(Axis = 1, RPM = 40*3.2)
+    # OD.SetVelocityMode(1)
+    # OD.SetSpeed(Axis = 0, RPM = 20)
+    # OD.ReleaseAxis(0)
+    # OD.SetSpeed(Axis = 1, RPM = 100)
 
-    #Get motor current
-    # while true:odrv0.axis0.motor.current_control.Iq_measured
-    
+    # Get motor current
+    # while True:
+        # print(OD.GetCurrent(0)+OD.GetCurrent(1))
     # import iPS4
 
     # PS4 = iPS4.PS4Controller()

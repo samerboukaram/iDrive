@@ -8,12 +8,13 @@ print(iCAM.PrintCamerasInfo())
 
 
 
-for CameraNumber in iCAM.GetCamerasNumbersAndNames()[0]:
-        iCAM.LaunchCamera(CameraNumber, 640,480,30, True, True)
+# for CameraNumber in iCAM.GetCamerasNumbersAndNames()[0]:
+#         iCAM.LaunchCamera(CameraNumber, 4*640,4*480,30, True, True)
         
 
-# iCAM.LaunchCamera(iCAM.GetCameraNumberByName('SPCA2100 PC Camera: PC Camera'), 640*2,480,30, True, True)
-# iCAM.LaunchCamera(iCAM.GetCameraNumberByName('HBV HD CAMERA: HBV HD CAMERA'), 640*2,360*2,30, True, True)
+# iCAM.LaunchCamera(iCAM.GetCameraNumberByName('SPCA2100 PC Camera: PC Camera'), 640,480,30, True, True)
+iCAM.LaunchCamera(iCAM.GetCameraNumberByName('HBV HD CAMERA: HBV HD CAMERA'), 680,360,30, True, True)
+iCAM.LaunchCamera(iCAM.GetCameraNumberByName('USB 2.0 Camera: USB Camera'), 680,480,30, True, True)
 
 
 print("end")

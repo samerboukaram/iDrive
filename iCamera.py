@@ -1,9 +1,10 @@
 from xml.dom.minidom import Identified
+from xmlrpc.client import Server
 import cv2
 import os
 import iOS
 import iServer as iSV
-
+import iServerOld as iSVO
 
 
 #######FUNCTIONS TO GET CAMERAS IN SYSTEM
@@ -93,7 +94,7 @@ def GetCameraByNumberOrName(NumberOrName):
 
 class Camera:
 
-    def __init__(self, CameraNumber, Width = None, Height = None, Format = None, FPS = None, Publish = False):
+    def __init__(self, CameraNumber, Width = None, Height = None, FPS = None, Publish = False):
        
         #Get Number
         self.Number = CameraNumber
@@ -103,13 +104,16 @@ class Camera:
         if Publish:
             #Create Publisher
             self.Port = 2000 + self.Number
+            #ZMQ
             self.Publisher = iSV.Publisher('0.0.0.0',self.Port) #created before accessing camera, to kill the process if already in use
+            #SOCKET
+            # self.Server = iSVO.CreateServerSocket('0.0.0.0', self.Port)
 
         #Get Camera
         iOS.KillCamera(self.Number) #kill the camera process if it was already running
         self.Capture = cv2.VideoCapture(self.Number)  # capture video from webcam 0
         if FPS: self.Capture.set(cv2.CAP_PROP_FPS, FPS)
-        if Format == "MJPEG":self.Capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc(*"MJPG"))
+        self.Capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc(*"MJPG"))
         if Width: self.Capture.set(cv2.CAP_PROP_FRAME_WIDTH, Width)
         if Height: self.Capture.set(cv2.CAP_PROP_FRAME_HEIGHT, Height)
         
@@ -199,12 +203,12 @@ if __name__ == '__main__':
 
 
     Cam = Camera(CameraNumber, 
-            Width = Width, Height = Height, Format = "MJPEG", FPS = FPS,Publish= Publish)
+            Width = Width, Height = Height, FPS = FPS,Publish= Publish)
 
     FPS = 0
 
     while True:
-        try:
+        # try:
             t0 = iT.t0()
 
             Frame = Cam.GetFrame()
@@ -213,13 +217,17 @@ if __name__ == '__main__':
                     DisplayFrame(Frame, "Camera Publisher", FPS)
 
                 if Publish:
+                    pass
+                    #ZMQ
                     Cam.Publisher.PublishImage("CAMERA",Frame)
-
+                    #Socket
+                    # iSVO.ServerSendFrame(Cam.Server, Frame)
             FPS = iT.GetFPS(t0)
-        except:
-            iOS.KillCamera(CameraNumber)
-            # Cam.Close()
-            exit() #to close the while loop
+            print(FPS)
+        # except:
+        #     iOS.KillCamera(CameraNumber)
+        #     # Cam.Close()
+        #     exit() #to close the while loop
     
 
 

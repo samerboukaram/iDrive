@@ -23,7 +23,7 @@ def generate_frames():
     while True:
             
         ## read the camera frame
-        frame = iServer.SubscribeImage('0.0.0.0',2000,"CAMERA")
+        frame = iServer.SubscribeImage('0.0.0.0',2002,"CAMERA")
         print('here')
         # iCAM.DisplayFrame(frame)
 

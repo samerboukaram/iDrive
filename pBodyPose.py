@@ -19,9 +19,9 @@ while True:
         # print("Frame", Frame)
 
         #Subscribe to webcam
-        Image = iSV.SubscribeImage('0.0.0.0','2000',"CAMERA")
-        Image, Right = iST.SplitStereoImage(Image)
-        Image = iCAM.cv2.resize(Image,(int(640/2),int(480/2)))
+        Image = iSV.SubscribeImage('0.0.0.0','2002',"CAMERA")
+        # Image, Right = iST.SplitStereoImage(Image)
+        # Image = iCAM.cv2.resize(Image,(int(640/2),int(480/2)))
 
         
         #DetectPose
