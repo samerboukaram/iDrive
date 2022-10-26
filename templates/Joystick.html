@@ -1,3 +1,5 @@
+<!-- https://www.cssscript.com/touch-joystick-controller/ -->
+
 <!DOCTYPE html>
 <html>
 
@@ -17,8 +19,17 @@
 
 Joystick Controls.
 <hr>
+
+<div class="container">
+	<img src="{{ url_for('Video') }}" width="640" height="360">
+	<img src="{{ url_for('Video2') }}" width="640" height="360">
+	<img src="{{ url_for('Video3') }}" width="640" height="360">
+
+</div>
+
 <div id="status1" style="color: red;">Joystick 1</div>
 <div id="status2" style="color: blue;">Joystick 2</div>
+
 
 <hr>
 <div style="border: 1px solid red; width: 128px; position: absolute; left:10px; top:150px;">
@@ -149,10 +160,27 @@ class JoystickController
 let joystick1 = new JoystickController("stick1", 64, 8);
 let joystick2 = new JoystickController("stick2", 64, 8);
 
+function SendData(Topic, data)
+{
+	var req = new XMLHttpRequest();
+	req.open('POST', '/', true);
+	req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+	req.send("Topic" + "=" + JSON.stringify(data));
+}
+
 function update()
 {
 	document.getElementById("status1").innerText = "Joystick 1: " + JSON.stringify(joystick1.value);
 	document.getElementById("status2").innerText = "Joystick 2: " + JSON.stringify(joystick2.value);
+
+	// SendData("Joy1", joystick1.value)
+	var req = new XMLHttpRequest();
+	req.open('POST', '/', true);
+	req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+	req.send("Joy1=" + JSON.stringify(joystick1.value));
+
+
+	
 }
 
 function loop()

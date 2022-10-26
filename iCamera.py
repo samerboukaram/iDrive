@@ -222,8 +222,8 @@ if __name__ == '__main__':
                     Cam.Publisher.PublishImage("CAMERA",Frame)
                     #Socket
                     # iSVO.ServerSendFrame(Cam.Server, Frame)
-            FPS = iT.GetFPS(t0)
-            print(FPS)
+                FPS = iT.GetFPS(t0)
+                print(FPS)
         # except:
         #     iOS.KillCamera(CameraNumber)
         #     # Cam.Close()
