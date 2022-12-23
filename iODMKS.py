@@ -96,7 +96,7 @@ class ODESC:
         Axis.motor.config.motor_type = 0 #MOTOR_TYPE_HIGH_CURRENT (Not gimbal)
         Axis.motor.config.resistance_calib_max_voltage = 5 #MaxSVoltage/2 #2 by MKS 4 for iDrive #it is standardized to S/2
         Axis.motor.config.calibration_current =10 #10 for 6354, 5 by MKS 2 for iDrive smaller motors like 5055,4260 #Standardized to S
-        Axis.motor.config.current_lim = 50 #25 #MaxSVoltage*3.65 #MaX current for motor  #15 by MKS #25 for iDrive
+        Axis.motor.config.current_lim = 30 #MaxSVoltage*3.65 #MaX current for motor  #15 by MKS #25 for iDrive
         Axis.motor.config.requested_current_range = MaxSVoltage*3.65+5 #20 for MKS motor current sampling range.
         #Axis.motor.config.direction = 0 #-1 1
         Axis.controller.config.vel_limit = MaxSVoltage*980*3.65/60 #30 for MKS #18.25 #maximum speed of the motor, the unit is [turn/s]. # CHECK MKS VALUE
@@ -124,7 +124,7 @@ class ODESC:
         Axis.encoder.config.mode = 0 #ENCODER_MODE_INCREMENTAL
         Axis.encoder.config.cpr = CPR #MKS encoder
         Axis.encoder.config.bandwidth = 3000 # 3000MKS default was 1000
-        Axis.encoder.config.calib_scan_distance = 50 #how much the motor rotates for calibration
+        Axis.encoder.config.calib_scan_distance = 50#50 #how much the motor rotates for calibration
         #               default was 50 increased  not to have CPR Mismatch
         Axis.config.calibration_lockin.current = 5 #MKS
         # Axis.config.can_node_id = 16
@@ -312,7 +312,7 @@ if __name__ == '__main__':
 
     OD = ODESC()
     # OD.Reboot()
-    OD.DumpErrors()
+    # OD.DumpErrors()
     # OD.EraseConfiguration()
     # OD.PassSettings(0)
     # OD.PassSettings(1)
@@ -321,7 +321,7 @@ if __name__ == '__main__':
     # OD.ConfigureEncoder(Axis = 0, CPR = 16384)
     # OD.ConfigureGains(Axis = 0)
 
-    # OD.ConfigureMotor(Axis = 1,PolePairs = 7, MaxSVoltage = 5, KV = 140)
+    # OD.ConfigureMotor(Axis = 1,PolePairs = 7, MaxSVoltage = 5, KV = 100)
     # OD.ConfigureEncoder(Axis = 1, CPR = 16384)
     # OD.ConfigureGains(Axis = 1)
 
@@ -343,22 +343,22 @@ if __name__ == '__main__':
 
 
     # OD.SetVelocityMode(0)
-    # OD.SetVelocityMode(1)
+    OD.SetVelocityMode(1)
     # OD.SetSpeed(Axis = 0, RPM = 20)
-    # OD.ReleaseAxis(0)
-    # OD.SetSpeed(Axis = 1, RPM = 100)
+    OD.ReleaseAxis(1)
+    OD.SetSpeed(Axis = 1, RPM = -20)
 
     # Get motor current
     # while True:
-        # print(OD.GetCurrent(0)+OD.GetCurrent(1))
+        # print(OD.GetCurrent(0)+OD.GetCurrent(1), OD.odrv0.ibus)
     # import iPS4
 
     # PS4 = iPS4.PS4Controller()
 
     # while True:
-    #     PS4.GetValues()
-    #     RPM = -int(PS4.LeftStickUD*1000/10)
-    #     OD.SetSpeed(Axis = 0, RPM = 42+RPM)
+        # PS4.GetValues()
+        # RPM = -int(PS4.LeftStickUD*1000/10)
+        # OD.SetSpeed(Axis = 1, RPM = RPM/100)
 
 
     # OD.SetPositionMode(0)

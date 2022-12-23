@@ -1,0 +1,139 @@
+#reference
+https://gist.github.com/alperk-cvml/46b2de4501686f125b569c3adc7ec75e
+
+h264 delay
+#https://stackoverflow.com/questions/57575951/how-to-wait-for-x264enc-to-encode-buffered-frames-on-end-of-stream
+#http://forum.doom9.org/showthread.php?t=164688
+
+
+################################SKYDROID#####################################
+
+# JPEG raw h264 SERIAL
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! videoconvert \
+     ! video/x-raw , colorim#https://stackoverflow.com/questions/57575951/how-to-wait-for-x264enc-to-encode-buffered-frames-on-end-of-streametry=bt601 \
+     ! x264enc bitrate=500000 tune=zerolatency \
+     ! video/x-h264,profile=high,stream-format=byte-stream \
+     ! filesink location=/dev/ttyS0
+
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! x264enc bitrate=500 tune=zerolatency byte-stream=True \
+     ! video/x-h264,profile=high,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+
+#CONTINOUS BUT WITH LATENCY
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! x264enc pass=5 quantizer=25 speed-preset=6 bitrate=500 tune=zerolatency byte-stream=True \
+     ! video/x-h264,profile=baseline,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! x264enc bitrate=500 tune=zerolatency byte-stream=True \
+     ! video/x-h264,profile=baseline,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! x264enc pass=5 quantizer=25 speed-preset=6 bitrate=500 tune=zerolatency byte-stream=True \
+     ! video/x-h264,framerate-=30/1,profile=constrained-baseline,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! x264enc pass=5 quantizer=25 speed-preset=6 bitrate=515 tune=zerolatency byte-stream=True \
+     ! video/x-h264,framerate-=30/1,profile=constrained-baseline,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! x264enc pass=5 quantizer=25 speed-preset=1 bitrate=5000 tune=zerolatency byte-stream=True \
+     ! video/x-h264,framerate-=30/1,profile=constrained-baseline,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+
+#WEBCAM TO JPEG TO 264 TO UART
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec \
+     ! x264enc pass=4 quantizer=30 speed-preset=1 bitrate=500 tune=zerolatency byte-stream=True \
+     ! video/x-h264,framerate-=30/1,profile=constrained-baseline,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec ! x264enc pass=19 quantizer=50 speed-preset=1 bitrate=500 tune=zerolatency byte-stream=True qp-min=18 rc-lookahead=30 \
+     ! video/x-h264,framerate=30/1,profile=baseline,stream-format=byte-stream \
+     ! filesink location=/dev/ttyUSB0
+
+
+#pass 5 is better than 4
+
+#Skydroid programatically
+gst-launch-1.0 v4l2src device=/dev/video0 \
+     ! image/jpeg,width=640,height=360,framerate=20/1 ! queue \
+     ! jpegdec ! queue \
+     ! videoconvert ! queue \
+     ! video/x-raw,format=I420 ! queue \
+     ! x264enc bitrate=500 tune=zerolatency byte-stream=True intra-refresh=True ! queue \
+     ! video/x-h264, framerate=20/1, profile=baseline, stream-format=byte-stream ! queue \
+     ! filesink location=/dev/ttyUSB0
+
+
+##### BESTTTTT SKYDOIRD
+gst-launch-1.0 v4l2src device=/dev/video0 \
+     ! image/jpeg,width=640,height=360,framerate=20/1 \
+     ! jpegdec \
+     ! x264enc bitrate=500 tune=zerolatency byte-stream=True intra-refresh=True \
+     ! video/x-h264, framerate=20/1, profile=baseline, stream-format=byte-stream \
+     ! queue \
+     ! filesink location=/dev/ttyUSB0
+
+
+
+
+#basic jpeg webcam to autovideosink
+gst-launch-1.0 -v v4l2src device=/dev/video2 \
+     ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! jpegdec ! x264enc ! decodebin \
+     ! autovideosink
+
+
+
+#########################LTE########################################
+
+#from Local Camera to Cloud
+gst-launch-1.0 -v v4l2src device=/dev/video2 ! image/jpeg , format=MJPEG, width=640, height=360 , framerate=30/1 \
+     ! udpsink host=172.104.253.25 port=2000
+
+#inside cloud to flask or to client
+gst-launch-1.0 udpsrc port=2000 ! tcpserversink host=0.0.0.0 port=3000
+#####BEST TO ADD A queue after udpsrc
+
+#client
+gst-launch-1.0 tcpclientsrc host=172.104.253.25 port=3000 ! jpegdec ! autovideosink
+
+
+#get video directly from http
+gst-launch-1.0 -v souphttpsrc location=http://172.104.253.25/video ! decodebin ! autovideosink
+
+
+
+###################GstreamertoFlask#####################################
+gst-launch-1.0 v4l2src device="/dev/video0" ! videoconvert ! clockoverlay \
+     ! x264enc tune=zerolatency ! mpegtsmux ! hlssink playlist-root=http://0.0.0.0:8080 target-duration=1 max-files=5
